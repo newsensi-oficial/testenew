@@ -1655,7 +1655,6 @@
         // ===== NOVO CARROSSEL =====
         const TOTAL_SLIDES = 11;
         let currentSlide = 0;
-        let autoplayTimer = null;
  
         const track = document.getElementById('carouselTrack');
         const dotsContainer = document.getElementById('carouselDots');
@@ -1702,25 +1701,14 @@
                 d.classList.toggle('active', i === currentSlide);
             });
             ajustarAlturaSlideAtual();
-            resetAutoplay();
         }
  
         function moveCarousel(dir) {
             goToSlide(currentSlide + dir);
         }
- 
-        function startAutoplay() {
-            autoplayTimer = setInterval(() => goToSlide(currentSlide + 1), 4000);
-        }
- 
-        function resetAutoplay() {
-            clearInterval(autoplayTimer);
-            startAutoplay();
-        }
 
         ajustarAlturaSlideAtual();
         window.addEventListener('resize', ajustarAlturaSlideAtual);
-        startAutoplay();
  
         let touchStartX = 0;
         const trackContainer = document.querySelector('.carousel-track-container');
