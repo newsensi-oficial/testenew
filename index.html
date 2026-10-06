@@ -1096,10 +1096,10 @@
                 <span><strong style="color: #00ff41; font-size: 1.25rem;" id="user-count">994</strong> <span style="color: #d1d5db;">Players online agora!</span></span>
             </div>
  
-            <!-- Wistia Video -->
-            <div class="video-placeholder">
-                <script src="https://fast.wistia.com/player.js" async></script>
-                <script src="https://fast.wistia.com/embed/m8pcxycab8.js" async type="module"></script>
+            <!-- Wistia Video (carregamento adiado: só baixa o player quando o vídeo
+                 está perto de entrar na tela, pra não competir com o resto do site
+                 pelos primeiros segundos de carregamento da página) -->
+            <div class="video-placeholder" id="vslVideoWrapper">
                 <style>
                     wistia-player[media-id='m8pcxycab8']:not(:defined) { 
                         background: center / contain no-repeat url('https://fast.wistia.com/embed/medias/m8pcxycab8/swatch'); 
@@ -1824,6 +1824,68 @@
         }
         window.addEventListener('resize', resize);
         resize();
+    })();
+    </script>
+    <script>
+    // ===== CARREGAMENTO ADIADO DO VÍDEO DA VSL (Wistia) =====
+    // Só baixa os scripts do player quando o vídeo está perto de aparecer na tela,
+    // em vez de carregar assim que a página abre. Isso deixa o primeiro carregamento
+    // do site mais rápido, já que o player da Wistia não compete por banda logo de cara.
+    (function() {
+        const wrapper = document.getElementById('vslVideoWrapper');
+        if (!wrapper) return;
+
+        let jaCarregou = false;
+        function carregarWistia() {
+            if (jaCarregou) return;
+            jaCarregou = true;
+
+            const s1 = document.createElement('script');
+            s1.src = 'https://fast.wistia.com/player.js';
+            s1.async = true;
+            document.body.appendChild(s1);
+
+            const s2 = document.createElement('script');
+            s2.src = 'https://fast.wistia.com/embed/m8pcxycab8.js';
+            s2.async = true;
+            s2.type = 'module';
+            document.body.appendChild(s2);
+        }
+
+        // O vídeo já aparece bem no topo da página (acima da dobra, dentro da área
+        // visível assim que a página abre), então "esperar rolar até ele" não faria
+        // diferença — o navegador consideraria ele "visível" quase instantaneamente.
+        // Por isso, a estratégia aqui é: deixar o resto da página crítica (textos,
+        // fontes, CSS, imagens) carregar primeiro, e só então buscar o player da
+        // Wistia, aproveitando um momento em que o navegador está ocioso.
+        function agendarCarregamento() {
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(carregarWistia, { timeout: 2000 });
+            } else {
+                setTimeout(carregarWistia, 300);
+            }
+        }
+
+        if (document.readyState === 'complete') {
+            agendarCarregamento();
+        } else {
+            window.addEventListener('load', agendarCarregamento);
+        }
+
+        // Rede de segurança: se por algum motivo o vídeo estiver bem mais abaixo
+        // na página (layout diferente, tela maior etc.) e a pessoa rolar até ele
+        // antes do load terminar, carrega na hora também.
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        carregarWistia();
+                        observer.disconnect();
+                    }
+                });
+            });
+            observer.observe(wrapper);
+        }
     })();
     </script>
 </body>
