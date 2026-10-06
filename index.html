@@ -485,6 +485,7 @@
             border: 2px solid rgba(0, 255, 65, 0.3);
             box-shadow: 0 25px 50px -12px rgba(0, 255, 65, 0.15);
             background: #1a1a1a;
+            transition: height 0.3s ease;
         }
  
         .carousel-track {
@@ -500,7 +501,7 @@
         .carousel-slide img {
             width: 100%;
             height: auto;
-            max-height: 600px;
+            max-height: 720px;
             object-fit: contain;
             display: block;
             background: #1a1a1a;
@@ -1665,6 +1666,31 @@
             dotsContainer.appendChild(dot);
         }
  
+        const slideImages = Array.from(track.querySelectorAll('.carousel-slide img'));
+
+        // Ajusta a altura do container pra bater exatamente com a proporção
+        // da imagem do slide atual, sem sobrar espaço preto em volta.
+        function ajustarAlturaSlideAtual() {
+            const img = slideImages[currentSlide];
+            if (!img) return;
+            const container = document.querySelector('.carousel-track-container');
+            if (!container) return;
+
+            function aplicarAltura() {
+                if (!img.naturalWidth || !img.naturalHeight) return;
+                const largura = container.offsetWidth;
+                let altura = largura * (img.naturalHeight / img.naturalWidth);
+                altura = Math.min(altura, 720); // mesmo teto de segurança do CSS
+                container.style.height = altura + 'px';
+            }
+
+            if (img.complete) {
+                aplicarAltura();
+            } else {
+                img.addEventListener('load', aplicarAltura, { once: true });
+            }
+        }
+
         function goToSlide(index) {
             currentSlide = (index + TOTAL_SLIDES) % TOTAL_SLIDES;
             track.style.transform = `translateX(-${currentSlide * 100}%)`;
@@ -1672,6 +1698,7 @@
             document.querySelectorAll('.carousel-dot').forEach((d, i) => {
                 d.classList.toggle('active', i === currentSlide);
             });
+            ajustarAlturaSlideAtual();
             resetAutoplay();
         }
  
@@ -1687,7 +1714,9 @@
             clearInterval(autoplayTimer);
             startAutoplay();
         }
- 
+
+        ajustarAlturaSlideAtual();
+        window.addEventListener('resize', ajustarAlturaSlideAtual);
         startAutoplay();
  
         let touchStartX = 0;
