@@ -854,7 +854,8 @@
  
         /* Footer */
         footer {
-            padding: 60px 16px 40px;
+            /* o espaço extra embaixo (~90px) é pra a barra fixa do rodapé não cobrir o fim da página */
+            padding: 60px 16px calc(40px + 90px + env(safe-area-inset-bottom, 0px));
             border-top: 1px solid #1e1e1e;
             background: #000;
         }
@@ -1817,12 +1818,11 @@
         }
  
         // Sticky CTA — regra: aparece depois que o botão grande do topo sai da tela;
-        // some enquanto a seção de planos está na tela (lá já existem os botões de compra);
-        // volta depois dos planos; e some de vez quando chega no rodapé.
+        // some só enquanto a seção de planos está na tela (lá já existem os botões de compra);
+        // volta depois dos planos e fica até o final da página (inclusive no rodapé).
         const stickyCta = document.getElementById('sticky-cta');
         const heroCtaEl = document.getElementById('heroCta');
         const packagesEl = document.getElementById('pacotes');
-        const footerEl = document.getElementById('footer');
 
         // Preço da barra = menor preço entre os planos, lido direto dos cards
         // (assim, se você mudar os preços dos planos, a barra acompanha sozinha)
@@ -1839,10 +1839,9 @@
         if (stickyCta && 'IntersectionObserver' in window) {
             let heroCtaPassou = false;   // a pessoa já rolou além do botão grande do topo
             let planosVisiveis = false;  // a seção de planos está na tela
-            let footerVisible = false;   // o rodapé está na tela
 
             function updateStickyCta() {
-                const mostrar = heroCtaPassou && !planosVisiveis && !footerVisible;
+                const mostrar = heroCtaPassou && !planosVisiveis;
                 stickyCta.classList.toggle('show', mostrar);
                 document.body.classList.toggle('sticky-bar-visible', mostrar);
             }
@@ -1870,17 +1869,6 @@
                     { rootMargin: '0px 0px -25% 0px' }
                 );
                 packagesObs.observe(packagesEl);
-            }
-
-            if (footerEl) {
-                const footerObs = new IntersectionObserver(
-                    (entries) => {
-                        footerVisible = entries[0].isIntersecting;
-                        updateStickyCta();
-                    },
-                    { threshold: 0.01 }
-                );
-                footerObs.observe(footerEl);
             }
         }
     </script>
