@@ -995,39 +995,80 @@
             .packages h2, .faq h2 { font-size: 3.75rem; }
         }
  
-        /* STICKY CTA */
+        /* STICKY CTA — barra fixa no rodapé: preço à esquerda + botão à direita */
         .sticky-cta {
             position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 0;
+            right: 0;
+            bottom: 0;
             z-index: 9996;
             display: none;
+            padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+            background: rgba(0, 0, 0, 0.92);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(0, 255, 65, 0.35);
+            box-shadow: 0 -10px 30px rgba(0, 255, 65, 0.12);
         }
  
         .sticky-cta.show {
             display: block;
-            animation: sticky-slide-up 0.5s ease-out;
+            animation: sticky-slide-up 0.4s ease-out;
         }
  
         @keyframes sticky-slide-up {
-            from { transform: translateX(-50%) translateY(100px); opacity: 0; }
-            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .sticky-cta-inner {
+            max-width: 520px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .sticky-cta-price { line-height: 1.1; min-width: 0; }
+
+        .sticky-cta-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .sticky-cta-value {
+            display: block;
+            font-size: 24px;
+            font-weight: 900;
+            color: #00ff41;
+            text-shadow: 0 0 12px rgba(0, 255, 65, 0.45);
+            white-space: nowrap;
         }
  
-        .sticky-cta a {
+        .sticky-cta a.sticky-cta-btn {
+            flex-shrink: 0;
             display: inline-block;
             background: linear-gradient(to right, #00ff41, #00e639);
             color: black;
             font-weight: 900;
-            padding: 12px 18px;
+            padding: 13px 20px;
             border-radius: 9999px;
             text-decoration: none;
-            box-shadow: 0 25px 50px -12px rgba(0, 255, 65, 0.5);
+            box-shadow: 0 8px 24px -6px rgba(0, 255, 65, 0.55);
             text-transform: uppercase;
             letter-spacing: 0.04em;
             font-size: 13px;
+            white-space: nowrap;
         }
+
+        /* Quando a barra aparece, as notificações de compra sobem pra não ficarem escondidas atrás dela */
+        .notifications { transition: bottom 0.3s ease; }
+        body.sticky-bar-visible .notifications { bottom: calc(86px + env(safe-area-inset-bottom, 0px)); }
  
         /* Provas sociais */
         .cta-social-proof {
@@ -1454,7 +1495,13 @@
  
     <!-- Sticky CTA -->
     <div class="sticky-cta" id="sticky-cta">
-        <a href="#pacotes">GARANTIR MEU XIT!</a>
+        <div class="sticky-cta-inner">
+            <div class="sticky-cta-price">
+                <span class="sticky-cta-label">A partir de</span>
+                <span class="sticky-cta-value" id="stickyPriceValue">R$29,00</span>
+            </div>
+            <a href="#pacotes" class="sticky-cta-btn">GARANTIR MEU XIT!</a>
+        </div>
     </div>
  
     <!-- Footer -->
@@ -1774,16 +1821,26 @@
         const faqEl = document.getElementById('faq');
         const footerEl = document.getElementById('footer');
 
+        // Preço da barra = menor preço entre os planos, lido direto dos cards
+        // (assim, se você mudar os preços dos planos, a barra acompanha sozinha)
+        (function preencherPrecoDaBarra() {
+            const alvo = document.getElementById('stickyPriceValue');
+            if (!alvo) return;
+            const textos = Array.from(document.querySelectorAll('.package-price')).map(el => el.textContent.trim());
+            const valores = textos.map(t => parseFloat(t.replace(/[^\d,]/g, '').replace(',', '.')));
+            const validos = valores.filter(v => !isNaN(v));
+            if (!validos.length) return; // mantém o preço de reserva escrito no HTML
+            alvo.textContent = textos[valores.indexOf(Math.min(...validos))];
+        })();
+
         if (stickyCta && 'IntersectionObserver' in window) {
             let faqVisible = false;
             let footerVisible = false;
 
             function updateStickyCta() {
-                if (faqVisible && !footerVisible) {
-                    stickyCta.classList.add('show');
-                } else {
-                    stickyCta.classList.remove('show');
-                }
+                const mostrar = faqVisible && !footerVisible;
+                stickyCta.classList.toggle('show', mostrar);
+                document.body.classList.toggle('sticky-bar-visible', mostrar);
             }
 
             if (faqEl) {
